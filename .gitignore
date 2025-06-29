@@ -1,63 +1,33 @@
-# ----------------------
-# Node.js / Frontend
-# ----------------------
+# Node / Frontend
 node_modules/
 apps/*/node_modules/
 packages/*/node_modules/
-.env.local
 .next/
 dist/
 out/
-.vscode/
 
-# ----------------------
 # Python / Backend
-# ----------------------
-*.pyc
-__pycache__/
 .venv/
-env/
-venv/
-instance/
-*.db
-*.sqlite3
+__pycache__/
+*.pyc
 apps/*/.venv/
 apps/*/__pycache__/
 
-# ----------------------
-# macOS / System Files
-# ----------------------
-.DS_Store
-Thumbs.db
-
-# ----------------------
-# Logs / Temp
-# ----------------------
-*.log
-*.bak
-*.tmp
-
-# ----------------------
-# Environment & Secrets
-# ----------------------
+# Secrets & env
 .env
 .env.*
 !.env.example
 
-# ----------------------
-# Editor / IDE settings
-# ----------------------
-.idea/
-.vscode/
-*.swp
-*.swo
+# OS files
+.DS_Store
+Thumbs.db
 
-# ----------------------
-# Lint / Coverage / Build
-# ----------------------
-coverage/
-*.coverage
-*.egg-info/
-htmlcov/
-build/
+# Editor settings
+.vscode/
+.idea/
+
+# Build / Cache / Logs
 .cache/
+*.log
+*.tmp
+*.bak
