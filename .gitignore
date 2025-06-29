@@ -1,2 +1,33 @@
-.venv
+# Node / Frontend
+node_modules/
+apps/*/node_modules/
+packages/*/node_modules/
+.next/
+dist/
+out/
+
+# Python / Backend
+.venv/
+__pycache__/
+*.pyc
+apps/*/.venv/
+apps/*/__pycache__/
+
+# Secrets & env
 .env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Build / Cache / Logs
+.cache/
+*.log
+*.tmp
+*.bak
