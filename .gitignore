@@ -1,33 +1,34 @@
-# Node / Frontend
+# Node
 node_modules/
-apps/*/node_modules/
-packages/*/node_modules/
+apps/**/node_modules/
+packages/**/node_modules/
 .next/
 dist/
 out/
 
-# Python / Backend
+# Python
 .venv/
 __pycache__/
 *.pyc
-apps/*/.venv/
-apps/*/__pycache__/
+*.db
+*.sqlite3
 
-# Secrets & env
-.env
-.env.*
-!.env.example
-
-# OS files
+# OS / System
 .DS_Store
 Thumbs.db
 
-# Editor settings
+# IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Build / Cache / Logs
-.cache/
+# Logs / Temp
 *.log
-*.tmp
 *.bak
+*.tmp
+
+# Environment / Secrets
+.env
+.env.*
+!.env.example
