@@ -10,7 +10,6 @@ import {
 } from "react-icons/fi";
 
 export default function Home() {
-  // ── state ────────────────────────────────────────────────────────────────
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [apiKey, setApiKey] = useState("");
@@ -20,21 +19,21 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // ── grab stored key (if any) ─────────────────────────────────────────────
+  // ✅ Get API base URL from env
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
+
   useEffect(() => {
     const saved = localStorage.getItem("OPENAI_API_KEY");
     if (saved) setApiKey(saved);
   }, []);
 
-  // ── core ask function ────────────────────────────────────────────────────
   const askQuestion = async () => {
     if (!question.trim()) return;
     setLoading(true);
     setAnswer("");
 
     try {
-      const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "/api";
-      const res = await fetch(`${backendURL}/ask`, {
+      const res = await fetch(`${baseUrl}/api/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,7 +56,6 @@ export default function Home() {
     }
   };
 
-  // ── util ────────────────────────────────────────────────────────────────
   const handleKey = (e: React.KeyboardEvent) =>
     e.key === "Enter" && (e.metaKey || e.ctrlKey) && askQuestion();
 
@@ -67,10 +65,8 @@ export default function Home() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // ── UI ───────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      {/* header */}
       <header className="w-full max-w-4xl px-6 py-6 flex justify-between items-center">
         <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent select-none">
           AskNerd 🤖
@@ -84,9 +80,7 @@ export default function Home() {
         </button>
       </header>
 
-      {/* main */}
       <main className="w-full max-w-4xl flex-1 px-6 flex flex-col gap-6">
-        {/* prompt box */}
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 p-5 shadow-sm">
           <textarea
             rows={3}
@@ -111,7 +105,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* answer */}
         {answer && (
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 p-6 shadow-sm">
             <div className="flex items-start justify-between mb-4">
@@ -130,18 +123,15 @@ export default function Home() {
       </main>
 
       <footer className="w-full py-4 text-center text-xs text-slate-500">
-        Cmd/Ctrl + Enter to send • Built with Next.js &amp; FastAPI
+        Cmd/Ctrl + Enter to send • Built with Next.js & FastAPI
       </footer>
 
-      {/* slide-in settings */}
       {showSettings && (
         <div className="fixed inset-0 z-40 flex">
-          {/* overlay */}
           <div
             className="flex-1 bg-black/40 backdrop-blur-sm lg:hidden"
             onClick={() => setShowSettings(false)}
           />
-          {/* panel */}
           <div className="w-80 max-w-[90%] bg-white dark:bg-gray-800 h-full shadow-xl p-6 overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-semibold text-lg">Settings</h3>
@@ -154,7 +144,6 @@ export default function Home() {
               </button>
             </div>
 
-            {/* model */}
             <label className="block text-sm font-medium mb-2">AI Model</label>
             <select
               value={model}
@@ -165,7 +154,6 @@ export default function Home() {
               <option value="gpt-4o">GPT-4o (paid)</option>
             </select>
 
-            {/* temperature */}
             <label className="block text-sm font-medium mb-2">
               Temperature ({temperature.toFixed(2)})
             </label>
@@ -179,7 +167,6 @@ export default function Home() {
               className="w-full accent-blue-600 mb-6"
             />
 
-            {/* key */}
             <label className="block text-sm font-medium mb-2">
               API Key (optional)
             </label>
