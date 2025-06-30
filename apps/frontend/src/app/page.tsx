@@ -33,7 +33,8 @@ export default function Home() {
     setAnswer("");
 
     try {
-      const res = await fetch("/api/ask", {
+      const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "/api";
+      const res = await fetch(`${backendURL}/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
