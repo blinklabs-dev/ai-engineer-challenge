@@ -12,7 +12,7 @@ export default function RAGChat() {
   const [uploadStatus, setUploadStatus] = useState("");
   const [isUploaded, setIsUploaded] = useState(false);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   const handleFileUpload = async () => {
     if (!file) return;
@@ -33,7 +33,7 @@ export default function RAGChat() {
       setUploadStatus("PDF uploaded successfully! You can now ask questions about it.");
       setIsUploaded(true);
       console.log("Upload response:", response.data);
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Upload error:", error);
       setUploadStatus("Error uploading PDF. Please try again.");
     } finally {
@@ -54,7 +54,7 @@ export default function RAGChat() {
       
       setAnswer(response.data.answer);
       setQuestion("");
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("RAG chat error:", error);
       setAnswer("Error processing your question. Please try again.");
     } finally {
@@ -70,8 +70,8 @@ export default function RAGChat() {
       setIsUploaded(false);
       setAnswer("");
       setQuestion("");
-    } catch {
-      console.error("Reset error");
+    } catch (error) {
+      console.error("Reset error:", error);
     }
   };
 
@@ -86,57 +86,58 @@ export default function RAGChat() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+            <h1 className="text-4xl font-bold text-white mb-2">
               RAG Chat
             </h1>
-            <p className="text-gray-600">
+            <p className="text-purple-200 text-lg">
               Upload a PDF and ask questions about its content
             </p>
           </div>
 
           {/* Navigation */}
           <div className="flex justify-center mb-8">
-            <div className="bg-white rounded-lg shadow-md p-2 flex space-x-2">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg shadow-lg p-2 flex space-x-2">
               <button 
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md font-medium"
+                className="px-6 py-3 text-white hover:bg-white/20 rounded-md font-medium transition-colors"
                 onClick={() => window.location.href = '/'}
               >
                 General Chat
               </button>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-md font-medium">
+              <button className="px-6 py-3 bg-purple-600 text-white rounded-md font-medium shadow-md hover:bg-purple-700 transition-colors">
                 RAG Chat
               </button>
             </div>
           </div>
 
           {/* File Upload Section */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              📄 Upload PDF Document
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg shadow-lg p-6 mb-6 border border-white/20">
+            <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+              <span className="mr-2">📄</span>
+              Upload PDF Document
             </h2>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white mb-2">
                   Select PDF file:
                 </label>
                 <input
                   type="file"
                   accept=".pdf"
                   onChange={handleFileChange}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                  className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-purple-600 file:text-white hover:file:bg-purple-700 file:transition-colors"
                 />
               </div>
 
               {file && (
-                <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-md">
-                  <FiFileText className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">{file.name}</span>
+                <div className="flex items-center space-x-2 p-3 bg-white/20 backdrop-blur-sm rounded-md border border-white/30">
+                  <FiFileText className="w-5 h-5 text-purple-300" />
+                  <span className="text-sm text-white font-medium">{file.name}</span>
                 </div>
               )}
 
@@ -144,7 +145,7 @@ export default function RAGChat() {
                 <button
                   onClick={handleFileUpload}
                   disabled={!file || loading}
-                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center space-x-2 px-6 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
                 >
                   <FiUpload className="w-4 h-4" />
                   <span>{loading ? "Processing..." : "Upload & Process"}</span>
@@ -153,7 +154,7 @@ export default function RAGChat() {
                 {isUploaded && (
                   <button
                     onClick={resetRAG}
-                    className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                    className="flex items-center space-x-2 px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium"
                   >
                     <FiTrash2 className="w-4 h-4" />
                     <span>Reset</span>
@@ -162,10 +163,10 @@ export default function RAGChat() {
               </div>
 
               {uploadStatus && (
-                <div className={`p-3 rounded-md ${
+                <div className={`p-4 rounded-md font-medium ${
                   uploadStatus.includes("Error") 
-                    ? "bg-red-50 text-red-700" 
-                    : "bg-green-50 text-green-700"
+                    ? "bg-red-600/20 text-red-200 border border-red-400/30" 
+                    : "bg-green-600/20 text-green-200 border border-green-400/30"
                 }`}>
                   {uploadStatus}
                 </div>
@@ -175,14 +176,15 @@ export default function RAGChat() {
 
           {/* Chat Interface */}
           {isUploaded && (
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                💬 Ask Questions About Your Document
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg shadow-lg p-6 border border-white/20">
+              <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <span className="mr-2">💬</span>
+                Ask Questions About Your Document
               </h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Your question:
                   </label>
                   <div className="flex space-x-2">
@@ -191,14 +193,14 @@ export default function RAGChat() {
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleRAGChat()}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="flex-1 px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-md text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
                       placeholder="What would you like to know about this document?"
                       disabled={loading}
                     />
                     <button
                       onClick={handleRAGChat}
                       disabled={loading || !question.trim()}
-                      className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                      className="px-6 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 font-medium transition-colors"
                     >
                       <FiSend className="w-4 h-4" />
                       <span>{loading ? "Thinking..." : "Ask"}</span>
@@ -208,19 +210,19 @@ export default function RAGChat() {
 
                 {/* Answer Display */}
                 {answer && (
-                  <div className="mt-6 p-4 bg-gray-50 rounded-md">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Answer:</h3>
-                    <div className="text-gray-700 whitespace-pre-wrap">
+                  <div className="mt-6 p-4 bg-black/20 rounded-md border border-white/10">
+                    <h3 className="text-lg font-semibold text-white mb-2">Answer:</h3>
+                    <div className="text-white whitespace-pre-wrap leading-relaxed">
                       {answer}
                     </div>
                   </div>
                 )}
 
                 {loading && (
-                  <div className="mt-6 p-4 bg-purple-50 rounded-md">
+                  <div className="mt-6 p-4 bg-purple-600/20 rounded-md border border-purple-400/30">
                     <div className="flex items-center space-x-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
-                      <span className="text-purple-600">Processing your question...</span>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-400"></div>
+                      <span className="text-purple-200">Processing your question...</span>
                     </div>
                   </div>
                 )}
