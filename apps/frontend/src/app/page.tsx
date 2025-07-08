@@ -1,184 +1,144 @@
-"use client";
+// src/app/page.tsx - Original Chat (Simple AI Chat)
+'use client'
 
-import { useState, useEffect } from "react";
-import { FiSettings, FiSend, FiCheck, FiCopy } from "react-icons/fi";
+import { useState } from 'react'
+import axios from 'axios'
 
-export default function Home() {
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [model, setModel] = useState("gpt-3.5-turbo");
-  const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+interface ChatMessage {
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: Date
+}
 
-  useEffect(() => {
-    const storedKey = localStorage.getItem("OPENAI_API_KEY");
-    if (storedKey) setApiKey(storedKey);
-  }, []);
+export default function OriginalChat() {
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [question, setQuestion] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  const askQuestion = async () => {
-    if (!question.trim()) return;
-    setLoading(true);
-    setAnswer("");
+ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
+  const addMessage = (role: 'user' | 'assistant', content: string) => {
+    setMessages(prev => [...prev, {
+      role,
+      content,
+      timestamp: new Date()
+    }])
+  }
+
+  const sendMessage = async () => {
+    if (!question.trim()) return
+    
+    const userQuestion = question.trim()
+    setQuestion('')
+    setIsLoading(true)
+    
+    // Add user message
+    addMessage('user', userQuestion)
+    
     try {
-      const res = await fetch("http://localhost:8000/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          q: question,
-          model,
-          api_key: apiKey || null,
-        }),
-      });
-
-      const data = await res.json();
-      if (data.answer) {
-        setAnswer(data.answer);
-      } else if (data.error) {
-        setAnswer(data.error);
+      const response = await axios.post(`${API_BASE}/ask`, {
+        q: userQuestion,
+        model: 'gpt-3.5-turbo'
+      })
+      
+      if (response.data.answer) {
+        addMessage('assistant', response.data.answer)
+      } else {
+        addMessage('assistant', `Error: ${response.data.error}`)
       }
-    } catch (err) {
-      console.error(err); // ✅ Fix: log err to avoid ESLint error
-      setAnswer("⚠️ Failed to reach backend.");
+      
+    } catch (error: any) {
+      addMessage('assistant', `Error: ${error.response?.data?.error || 'Failed to get response'}`)
     } finally {
-      setLoading(false);
+      setIsLoading(false)
     }
-
-    if (apiKey) {
-      localStorage.setItem("OPENAI_API_KEY", apiKey);
-    }
-  };
-
-  const copyToClipboard = async (text: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      askQuestion();
-    }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              AskNerd 🤖
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-1">
-              Ask anything, get intelligent answers
-            </p>
-          </div>
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm border border-slate-200 dark:border-gray-700 hover:shadow-md transition-all"
-          >
-            <FiSettings />
-          </button>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            💬 AI Chat Assistant
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Ask me anything! I use OpenAI's general knowledge to help you.
+          </p>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Chat Area */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-4">
-              <div className="flex gap-3">
-                <textarea
-                  className="flex-1 resize-none border-0 bg-transparent text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-0"
-                  placeholder="Ask me anything..."
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  rows={3}
-                />
-                <button
-                  onClick={askQuestion}
-                  disabled={loading || !question.trim()}
-                  className="self-end p-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-gray-600 text-white rounded-lg transition-all duration-200 hover:scale-105 disabled:scale-100"
+        
+        {/* Chat Section */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">General AI Chat</h2>
+          
+          {/* Messages */}
+          <div className="h-96 overflow-y-auto border border-gray-200 rounded-md p-4 mb-4 space-y-4">
+            {messages.length === 0 ? (
+              <div className="text-gray-600 text-center py-8">
+                <div className="text-4xl mb-2">🤖</div>
+                <p className="text-lg font-medium">Start a conversation!</p>
+                <p className="text-sm mt-2">Ask me about anything - programming, science, general knowledge, etc.</p>
+              </div>
+            ) : (
+              messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`p-3 rounded-md max-w-3xl ${
+                    message.role === 'user' 
+                      ? 'bg-blue-600 text-white ml-auto' 
+                      : 'bg-gray-100 text-gray-800 mr-auto'
+                  }`}
                 >
-                  {loading ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <FiSend />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {answer && (
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <h2 className="font-semibold text-slate-900 dark:text-white">Response</h2>
-                  <button
-                    onClick={() => copyToClipboard(answer)}
-                    className="p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    {copied ? <FiCheck /> : <FiCopy />}
-                  </button>
+                  <div className="flex items-start gap-3">
+                    <div className="text-lg">
+                      {message.role === 'user' ? '👤' : '🤖'}
+                    </div>
+                    <div className="flex-1">
+                      <div className={`font-medium text-sm mb-1 capitalize ${
+                        message.role === 'user' ? 'text-blue-100' : 'text-gray-600'
+                      }`}>
+                        {message.role}
+                      </div>
+                      <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {message.content}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="prose prose-slate dark:prose-invert max-w-none">
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
-                    {answer}
-                  </p>
-                </div>
-              </div>
+              ))
             )}
           </div>
-
-          {/* Settings Sidebar */}
-          <div className="lg:col-span-1">
-            <div
-              className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-6 ${
-                showSettings ? "block" : "hidden lg:block"
-              }`}
+          
+          {/* Input */}
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Ask me anything..."
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              disabled={isLoading}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={isLoading || !question.trim()}
+              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
             >
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Settings</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    AI Model
-                  </label>
-                  <select
-                    className="w-full p-3 border border-slate-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                  >
-                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    API Key (Optional)
-                  </label>
-                  <input
-                    type="password"
-                    className="w-full p-3 border border-slate-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={apiKey}
-                    placeholder="sk-..."
-                    onChange={(e) => setApiKey(e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Leave empty to use server default
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-gray-700">
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  💡 Tip: Press Cmd/Ctrl + Enter to send your message quickly
-                </p>
-              </div>
-            </div>
+              {isLoading ? 'Thinking...' : 'Send'}
+            </button>
+          </div>
+          
+          {/* Info */}
+          <div className="mt-4 text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+            <p className="font-medium text-blue-800">💡 About this chat:</p>
+            <ul className="mt-1 space-y-1 text-blue-700">
+              <li>• Uses OpenAI's general knowledge (like ChatGPT)</li>
+              <li>• Great for programming questions, explanations, general help</li>
+              <li>• No document upload needed - just ask questions directly</li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
