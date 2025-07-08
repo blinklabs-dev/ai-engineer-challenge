@@ -9,4 +9,5 @@ pydantic==2.11.7
 PyPDF2==3.0.1
 python-multipart==0.0.6
 numpy
-qdrant-client
+qdrant-clientPyPDF2==3.0.1
+python-multipart==0.0.6

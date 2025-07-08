@@ -84,6 +84,9 @@ class PDFLoader:
             # If we can open it, proceed with loading
             self.load_file()
             
+            # FIX: Return documents in the expected format
+            return [{"text": doc, "metadata": {"source": self.path}} for doc in self.documents]
+            
         except IOError as e:
             raise ValueError(f"Cannot access file at '{self.path}': {str(e)}")
         except Exception as e:
