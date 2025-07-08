@@ -1,12 +1,14 @@
-# apps/backend/requirements.txt - Clean working version
+# apps/backend/requirements.txt - Render compatible version
 fastapi==0.115.14
 uvicorn==0.35.0
 openai==1.93.0
 python-dotenv==1.1.1
 pydantic==2.11.7
 
-# RAG Dependencies
+# Essential RAG Dependencies (compatible versions)
 PyPDF2==3.0.1
 python-multipart==0.0.6
-numpy==1.24.3
-qdrant-client==1.6.4
+
+# Skip problematic dependencies for now - use fallback processing
+# numpy==1.24.3
+# qdrant-client==1.6.4
