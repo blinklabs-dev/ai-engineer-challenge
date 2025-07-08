@@ -15,7 +15,7 @@ export default function OriginalChat() {
   const [question, setQuestion] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
- const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
   const addMessage = (role: 'user' | 'assistant', content: string) => {
     setMessages(prev => [...prev, {
