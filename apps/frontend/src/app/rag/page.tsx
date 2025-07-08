@@ -353,10 +353,10 @@ export default function RAGChat() {
                     </button>
                   </div>
                   
-                  {/* Button state debug */}
+                  {/* Button state debug - Fixed ESLint errors */}
                   <div className="text-xs text-purple-300 mt-1">
                     Button enabled: {(!loading && question.trim()) ? 'Yes' : 'No'} 
-                    (loading: {loading ? 'true' : 'false'}, question: "{question.trim()}")
+                    (loading: {loading ? 'true' : 'false'}, question: &ldquo;{question.trim()}&rdquo;)
                   </div>
                 </div>
 
